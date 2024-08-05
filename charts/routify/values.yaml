@@ -1,0 +1,82 @@
+# Global configurations
+global:
+  environment: Production
+
+# PostgreSQL configurations
+postgresql:
+  enabled: true
+  auth:
+    username: routify_user
+    password: routify_password
+    database: routify_ai
+  service:
+    port: 5432
+
+# Redis configurations
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    service:
+      port: 6379
+
+# External database configurations (used if postgresql.enabled is false)
+externalDatabase:
+  host: ""
+  port: 5432
+  user: ""
+  password: ""
+  database: ""
+
+# External Redis configurations (used if redis.enabled is false)
+externalRedis:
+  host: ""
+  port: 6379
+
+# API configurations
+api:
+  replicaCount: 1
+  image:
+    repository: your-docker-registry/routify-api
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8080
+  jwt:
+    secret: ""
+    issuer: ""
+    audience: ""
+  gateway:
+    token: ""
+  encryption:
+    key: ""
+
+# Gateway configurations
+gateway:
+  replicaCount: 1
+  image:
+    repository: your-docker-registry/routify-gateway
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8080
+
+# Admin configurations
+admin:
+  replicaCount: 1
+  image:
+    repository: your-docker-registry/routify-admin
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 80
+  env:
+    googleClientId: ""
+    apiUrl: ""
+
+# Migrations configurations
+migrations:
+  image:
+    repository: your-docker-registry/routify-migrations
+    tag: latest

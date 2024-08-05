@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "routify.fullname" . }}-migrations
+  labels:
+    {{- include "routify.labels" . | nindent 4 }}
+    app.kubernetes.io/component: migrations
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "routify.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: migrations
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrations
+          image: "{{ .Values.migrations.image.repository }}:{{ .Values.migrations.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command: ["dotnet", "Routify.Migrations.dll"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "routify.fullname" . }}-configmap
+          env:
+            - name: ConnectionStrings__Postgres
+              value: "Host={{ include "routify.postgresHost" . }};Port={{ include "routify.postgresPort" . }};Username={{ include "routify.postgresUser" . }};Password={{ include "routify.postgresPassword" . }};Timeout=300;Database={{ include "routify.postgresDatabase" . }}"

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "routify.fullname" . }}-api
+  labels:
+    {{- include "routify.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "routify.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        {{- include "routify.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: api
+    spec:
+      containers:
+        - name: api
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "routify.fullname" . }}-configmap
+            - secretRef:
+                name: {{ include "routify.fullname" . }}-secret
+          env:
+            - name: ConnectionStrings__Postgres
+              value: "Host={{ include "routify.postgresHost" . }};Port={{ include "routify.postgresPort" . }};Username={{ include "routify.postgresUser" . }};Password={{ include "routify.postgresPassword" . }};Timeout=300;Database={{ include "routify.postgresDatabase" . }}"
+            - name: Redis__ConnectionString
+              value: "{{ include "routify.redisHost" . }}:{{ include "routify.redisPort" . }}"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.api.env.environment | quote }}
