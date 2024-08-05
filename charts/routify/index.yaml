@@ -1,0 +1,108 @@
+apiVersion: v1
+entries:
+  postgresql:
+  - annotations:
+      category: Database
+      images: |
+        - name: os-shell
+          image: docker.io/bitnami/os-shell:12-debian-12-r26
+        - name: postgres-exporter
+          image: docker.io/bitnami/postgres-exporter:0.15.0-debian-12-r38
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:16.3.0-debian-12-r23
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: 16.3.0
+    created: "2024-08-05T20:55:58.282508+02:00"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: PostgreSQL (Postgres) is an open source object-relational database
+      known for reliability and data integrity. ACID-compliant, it supports foreign
+      keys, joins, views, triggers and stored procedures.
+    digest: 20601bbd9fd6c4994e477568656fb86e8967e9efaaeb22514293a45e30945542
+    home: https://bitnami.com
+    icon: https://bitnami.com/assets/stacks/postgresql/img/postgresql-stack-220x234.png
+    keywords:
+    - postgresql
+    - postgres
+    - database
+    - sql
+    - replication
+    - cluster
+    maintainers:
+    - name: Broadcom, Inc. All Rights Reserved.
+      url: https://github.com/bitnami/charts
+    name: postgresql
+    sources:
+    - https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+    urls:
+    - https://routifyto.github.io/helm-charts/charts/postgresql-15.5.20.tgz
+    version: 15.5.20
+  redis:
+  - annotations:
+      category: Database
+      images: |
+        - name: kubectl
+          image: docker.io/bitnami/kubectl:1.30.3-debian-12-r4
+        - name: os-shell
+          image: docker.io/bitnami/os-shell:12-debian-12-r27
+        - name: redis
+          image: docker.io/bitnami/redis:7.2.5-debian-12-r4
+        - name: redis-exporter
+          image: docker.io/bitnami/redis-exporter:1.62.0-debian-12-r2
+        - name: redis-sentinel
+          image: docker.io/bitnami/redis-sentinel:7.2.5-debian-12-r4
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: 7.2.5
+    created: "2024-08-05T20:55:58.286078+02:00"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: Redis(R) is an open source, advanced key-value store. It is often
+      referred to as a data structure server since keys can contain strings, hashes,
+      lists, sets and sorted sets.
+    digest: 488b39d7dbf107c3749aedb11fd76a8be04762de91920d1b607590ffdd99bd9d
+    home: https://bitnami.com
+    icon: https://bitnami.com/assets/stacks/redis/img/redis-stack-220x234.png
+    keywords:
+    - redis
+    - keyvalue
+    - database
+    maintainers:
+    - name: Broadcom, Inc. All Rights Reserved.
+      url: https://github.com/bitnami/charts
+    name: redis
+    sources:
+    - https://github.com/bitnami/charts/tree/main/bitnami/redis
+    urls:
+    - https://routifyto.github.io/helm-charts/charts/redis-19.6.4.tgz
+    version: 19.6.4
+  routify:
+  - apiVersion: v2
+    appVersion: 0.1.2
+    created: "2024-08-05T20:55:58.279598+02:00"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: ^15
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: ^19
+    description: Helm charts for Routify AI
+    digest: fd8e5a5f643192ddea57d9a6081e6fe4f92328c9b5fb9847d0211f03ae8f3120
+    name: routify
+    type: application
+    urls:
+    - https://routifyto.github.io/helm-charts/routify-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-08-05T20:55:58.271623+02:00"
