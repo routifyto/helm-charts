@@ -2,9 +2,13 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "routify.fullname" . }}-admin
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "routify.labels" . | nindent 4 }}
     app.kubernetes.io/component: admin
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-1"
 spec:
   replicas: {{ .Values.admin.replicaCount }}
   selector:
@@ -20,7 +24,7 @@ spec:
       containers:
         - name: admin
           image: "{{ .Values.admin.image.repository }}:{{ .Values.admin.image.tag }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
@@ -29,9 +33,6 @@ spec:
             - name: REACT_APP_API_URL
               value: {{ .Values.admin.env.apiUrl | quote }}
             - name: ROUTIFY_ENV_VAR_GOOGLE_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "routify.fullname" . }}-secret
-                  key: GOOGLE_CLIENT_ID
+              value: {{ .Values.admin.env.googleClientId | quote }}
             - name: ROUTIFY_ENV_VAR_API_URL
               value: {{ .Values.admin.env.apiUrl | quote }}

@@ -121,7 +121,7 @@ Get the Redis host
 */}}
 {{- define "routify.redisHost" -}}
 {{- if .Values.redis.enabled }}
-{{- printf "%s-master" (include "redis.fullname" .Subcharts.redis) -}}
+{{- printf "%s-redis-master" .Release.Name -}}
 {{- else }}
 {{- .Values.externalRedis.host -}}
 {{- end -}}
@@ -132,8 +132,33 @@ Get the Redis port
 */}}
 {{- define "routify.redisPort" -}}
 {{- if .Values.redis.enabled }}
-{{- .Values.redis.master.service.port -}}
+6379
 {{- else }}
 {{- .Values.externalRedis.port -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get the Redis password or empty string if auth is disabled
+*/}}
+{{- define "routify.redisPassword" -}}
+{{- if and .Values.redis.enabled .Values.redis.auth.enabled }}
+{{- .Values.redis.auth.password -}}
+{{- else if and .Values.redis.enabled (not .Values.redis.auth.enabled) }}
+{{- "" -}}
+{{- else }}
+{{- .Values.externalRedis.password -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get the Redis connection string
+*/}}
+{{- define "routify.redisConnectionString" -}}
+{{- $password := include "routify.redisPassword" . -}}
+{{- if ne $password "" }}
+{{- printf "%s:%s,password=%s" (include "routify.redisHost" .) (include "routify.redisPort" .) $password -}}
+{{- else }}
+{{- printf "%s:%s" (include "routify.redisHost" .) (include "routify.redisPort" .) -}}
 {{- end -}}
 {{- end -}}

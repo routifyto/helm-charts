@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "routify.fullname" . }}-api
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "routify.labels" . | nindent 4 }}
     app.kubernetes.io/component: api
@@ -9,7 +10,7 @@ spec:
   type: {{ .Values.api.service.type }}
   ports:
     - port: {{ .Values.api.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.api.service.targetPort }}
       protocol: TCP
       name: http
   selector:

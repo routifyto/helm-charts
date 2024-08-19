@@ -16,7 +16,7 @@ This chart will deploy the following components of the Routify project:
 
 1. API
 2. Gateway
-3. Frontend
+3. Admin
 4. Migrations (as a Kubernetes Job)
 5. PostgreSQL (optional)
 6. Redis (optional)

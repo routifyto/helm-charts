@@ -12,10 +12,16 @@ postgresql:
   service:
     port: 5432
 
+image:
+  pullPolicy: Always
+
 # Redis configurations
 redis:
   enabled: true
   auth:
+    enabled: false
+    password: ""
+  replica:
     enabled: false
   master:
     service:
@@ -38,11 +44,12 @@ externalRedis:
 api:
   replicaCount: 1
   image:
-    repository: your-docker-registry/routify-api
+    repository: ghcr.io/routifyto/routify/api
     tag: latest
   service:
     type: ClusterIP
-    port: 8080
+    port: 80
+    targetPort: 8080
   jwt:
     secret: ""
     issuer: ""
@@ -56,17 +63,20 @@ api:
 gateway:
   replicaCount: 1
   image:
-    repository: your-docker-registry/routify-gateway
+    repository: ghcr.io/routifyto/routify/gateway
     tag: latest
   service:
     type: ClusterIP
-    port: 8080
+    port: 80
+    targetPort: 8080
+  api:
+    token: ""
 
 # Admin configurations
 admin:
   replicaCount: 1
   image:
-    repository: your-docker-registry/routify-admin
+    repository: ghcr.io/routifyto/routify/admin
     tag: latest
   service:
     type: ClusterIP
@@ -78,5 +88,18 @@ admin:
 # Migrations configurations
 migrations:
   image:
-    repository: your-docker-registry/routify-migrations
+    repository: ghcr.io/routifyto/routify/migrations
     tag: latest
+
+# Ingress configuration
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: public
+  hosts:
+    - host: admin.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          serviceName: admin
+          servicePort: 80
